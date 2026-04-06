@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Extension Settings</title>
+    <link rel="stylesheet" href="options.css" />
+    <!-- <style>
+      :root { --primary-color: #4CAF55; --bg-color: #f4f4f9; --border-color: #ddd; }
+      body { font-family: 'Segoe UI', sans-serif; padding: 15px; width: 350px; background-color: var(--bg-color); }
+      h2 { margin-top: 0; font-size: 1.2rem; color: #333; }
+      .tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 15px; }
+      .tab-link { background: none; border: none; padding: 10px; cursor: pointer; font-size: 13px; color: #666; flex: 1; text-align: center; }
+      .tab-link.active { color: var(--primary-color); border-bottom: 2px solid var(--primary-color); font-weight: bold; }
+      .tab-content { display: none; animation: fadeIn 0.3s; }
+      .tab-content.active { display: block; }
+      .form-group { margin-bottom: 15px; }
+      label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: bold; color: #555; }
+      input { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid var(--border-color); border-radius: 4px; }
+      .info-text { font-size: 11px; color: #777; margin-bottom: 10px; }
+      button.save-btn { background-color: var(--primary-color); color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style> -->
+  </head>
+
+  <body>
+    <h2>Settings</h2>
+
+    <div class="tabs">
+      <button class="tab-link active" data-target="agent-tab">LLM Agent</button>
+      <button class="tab-link" data-target="integration-tab">
+        Xray Integration
+      </button>
+    </div>
+
+    <div id="agent-tab" class="tab-content active">
+      <div class="info-text">Configure your AI Agents.</div>
+
+      <div
+        class="form-group"
+        style="background: #fff; padding: 10px; border-radius: 4px; border: 1px solid var(--border-color); margin-bottom: 10px;"
+      >
+        <label>Default Agent:</label>
+        <div
+          style="display: flex; gap: 10px; font-size: 12px; margin-top: 5px;"
+        >
+          <label style="font-weight: normal; cursor: pointer;">
+            <input
+              type="radio"
+              name="defaultAgent"
+              value="ollama"
+              style="width: auto;"
+            />
+            Ollama (Local)
+          </label>
+          <label style="font-weight: normal; cursor: pointer;">
+            <input
+              type="radio"
+              name="defaultAgent"
+              value="gemini"
+              style="width: auto;"
+            />
+            Gemini (Cloud)
+          </label>
+        </div>
+      </div>
+
+      <div id="ollama-config">
+        <label for="host">Ollama Host URL:</label>
+        <div class="form-group">
+          <input
+            type="text"
+            id="host"
+            placeholder="e.g. http://localhost:11434"
+          />
+        </div>
+
+        <label for="ollamaModel">Model:</label>
+        <div class="form-group" style="display: flex; gap: 8px; align-items: center;">
+          <select id="ollamaModel" style="flex: 1; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+            <option value="">-- select a model --</option>
+          </select>
+          <button
+            id="refreshModels"
+            type="button"
+            style="padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px; background: #fff; cursor: pointer; font-size: 12px;"
+          >&#8635; Refresh</button>
+        </div>
+        <div id="modelFetchStatus" aria-live="polite" style="font-size: 11px; color: #999; margin-bottom: 8px;"></div>
+      </div>
+
+      <div id="gemini-config">
+        <label for="geminiKey">Gemini API Key:</label>
+        <div class="form-group">
+          <input
+            type="password"
+            id="geminiKey"
+            placeholder="Paste your Gemini API Key"
+          />
+        </div>
+
+        <label for="geminiModelSelect">Model:</label>
+        <div class="form-group" style="display: flex; gap: 8px; align-items: center;">
+          <select id="geminiModelSelect" style="flex: 1; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+            <option value="">-- select a model --</option>
+          </select>
+          <button
+            id="refreshGeminiModels"
+            type="button"
+            style="padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px; background: #fff; cursor: pointer; font-size: 12px;"
+          >&#8635; Refresh</button>
+        </div>
+        <div id="geminiModelFetchStatus" aria-live="polite" style="font-size: 11px; color: #999; margin-bottom: 8px;"></div>
+
+        <div class="info-text">
+          <a
+            href="https://aistudio.google.com/app/apikey"
+            target="_blank"
+            style="color: #2196F3; text-decoration: none;"
+            >&#128279; Get Gemini Key here</a
+          >
+        </div>
+      </div>
+
+      <button class="save-btn" id="saveAgent">Save Agent Settings</button>
+    </div>
+
+    <div id="integration-tab" class="tab-content">
+      <div class="info-text">Configure your Xray Cloud API credentials.</div>
+      <div style="margin-bottom: 15px; font-size: 11px;">
+        <a
+          id="setupLink"
+          href="#"
+          target="_blank"
+          style="color: #2196F3; text-decoration: none; font-weight: bold;"
+        >
+          &#128279; Create Xray Credentials here
+        </a>
+      </div>
+      <div class="form-group">
+        <label for="clientId">Client ID:</label>
+        <input type="text" id="clientId" placeholder="Enter Client ID" />
+      </div>
+      <div class="form-group">
+        <label for="clientSecret">Client Secret:</label>
+        <input
+          type="password"
+          id="clientSecret"
+          placeholder="Enter Client Secret"
+        />
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="save-btn" id="saveIntegration">Save</button>
+        <button
+          id="testIntegration"
+          style="background-color: #2196F3; color: white; border: none; border-radius: 4px; padding: 10px; cursor: pointer; flex: 1;"
+        >
+          Test
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="statusMessage"
+      style="font-size: 13px; font-weight: bold; margin-top: 15px; text-align: center; color: transparent; min-height: 20px;"
+    ></div>
+
+    <script src="options.js"></script>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Test Scribe",
+  "version": "1.0.0",
+  "description": "Generate Gherkin or Manual scenarios based on your JIRA ticket description using Ollama or Gemini AI. Create JIRA ticket or XRAY test with one button.",
+  "icons": {
+    "16": "images/icons/test-scribe-logo-16.png",
+    "32": "images/icons/test-scribe-logo-32.png",
+    "48": "images/icons/test-scribe-logo-48.png",
+    "128": "images/icons/test-scribe-logo-128.png"
+  },
+  "permissions": ["activeTab", "scripting", "storage", "tabs"],
+  "host_permissions": [
+    "https://*.atlassian.net/*",
+    "http://*/*",
+    "https://us.xray.cloud.getxray.app/*",
+    "https://xray.cloud.getxray.app/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_icon": "images/icons/test-scribe-logo-32.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.atlassian.net/browse/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "options_page": "options.html"
+}

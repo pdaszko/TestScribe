@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+
+<body>
+  <div class="ts-header">
+    <div class="ts-logo">
+      <img src="images/icons/test-scribe-logo.png" alt="Test Scribe Logo" />
+      <p id="test-scribe-title">Test Scribe</p>
+    </div>
+    <div class="open-settings">
+      <a id="open-settings" class="settings-link" title="Open Settings">
+        Settings
+        <p>&#9881;</p>
+      </a>
+    </div>
+  </div>
+  <!-- GLOBAL SETTINGS -->
+  <div style="width:80%; margin: 10px auto 0; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+    <div class="active-llm" style="display: flex; align-items: center; gap: 6px;">
+      <span>Active LLM:</span>
+      <select id="llm-selector">
+        <option value="ollama">Ollama (Local)</option>
+        <option value="gemini">Gemini Cloud</option>
+      </select>
+    </div>
+    <div id="ollama-model-bar" class="model-bar" style="display: none;">
+      <span style="font-size: 12px;">Model:</span>
+      <select id="popup-ollama-model" style="font-size: 15px; padding: 1px 4px; border: 1px solid #ccc; border-radius: 4px;">
+        <option value="">Loading...</option>
+      </select>
+    </div>
+    <div id="gemini-model-bar" class="model-bar" style="display: none;">
+      <span style="font-size: 12px;">Model:</span>
+      <select id="popup-gemini-model" style="font-size: 15px; padding: 1px 4px; border: 1px solid #ccc; border-radius: 4px;">
+        <option value="">Loading...</option>
+      </select>
+    </div>
+    <a href="https://aistudio.google.com/app/logs" target="_blank" class="log-link" id="gemini-log-link">
+      <span>&#128196; Logs</span>
+    </a>
+  </div>
+
+  <div class="tabs popup-tabs" style="width: 80%; margin: 10px auto 20px auto;">
+    <button class="tab-link active" data-target="cucumber-tab">Cucumber Scenarios</button>
+    <button class="tab-link" data-target="manual-tab">Manual Scenarios</button>
+  </div>
+
+  <div id="cucumber-tab" class="tab-content active">
+    <!-- CUCUMBER GENERATOR -->
+    <div class="ts-generator">
+      <div class="popup-header">
+        <h1 id="ticket-title" style="margin:0; font-size: 1.2rem;"></h1>
+      </div>
+
+      <h3>Built prompt from requirements:</h3>
+      <textarea id="prompt-editor" class="prompt-editor" rows="6" style="width:100%"></textarea>
+      
+      <div class="generator">
+        <div class="status-container" style="justify-content: flex-start;">
+          <button id="generate-btn">Generate Test Cases</button>
+        </div>
+      </div>
+
+      <div id="loader" class="circle-loader" style="display:none;">
+        <div class="circle circle1"></div>
+        <div class="circle circle2"></div>
+        <div class="circle circle3"></div>
+      </div>
+
+      <h2>Generated Test Cases</h2>
+      <div id="test-list"></div>
+    </div>
+  </div>
+
+  <div id="manual-tab" class="tab-content">
+    <!-- MANUAL GENERATOR -->
+    <div class="ts-generator">
+      <div class="popup-header">
+        <h1 id="ticket-title-manual" style="margin:0; font-size: 1.2rem;"></h1>
+      </div>
+
+      <h3>Built prompt from requirements (Manual):</h3>
+      <textarea id="prompt-editor-manual" class="prompt-editor" rows="6" style="width:100%"></textarea>
+      
+      <div class="generator">
+        <div class="status-container" style="justify-content: flex-start;">
+          <button id="generate-btn-manual">Generate Manual Cases</button>
+        </div>
+      </div>
+
+      <div id="loader-manual" class="circle-loader" style="display:none;">
+        <div class="circle circle1"></div>
+        <div class="circle circle2"></div>
+        <div class="circle circle3"></div>
+      </div>
+
+      <h2>Generated Manual Test Cases</h2>
+      <div id="test-list-manual"></div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>

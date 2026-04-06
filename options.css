@@ -1,0 +1,83 @@
+:root {
+  --primary-color: #4caf55;
+  --bg-color: #f4f4f9;
+  --border-color: #ddd;
+}
+body {
+  font-family: "Segoe UI", sans-serif;
+  padding: 15px;
+  width: 350px;
+  background-color: var(--bg-color);
+}
+h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+.tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border-color);
+  margin-bottom: 15px;
+}
+.tab-link {
+  background: none;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #666;
+  flex: 1;
+  text-align: center;
+}
+.tab-link.active {
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+  font-weight: bold;
+}
+.tab-content {
+  display: none;
+  animation: fadeIn 0.3s;
+}
+.tab-content.active {
+  display: block;
+}
+.form-group {
+  margin-bottom: 15px;
+}
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #555;
+}
+input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+.info-text {
+  font-size: 11px;
+  color: #777;
+  margin-bottom: 10px;
+}
+button.save-btn {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
