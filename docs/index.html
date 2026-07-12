@@ -505,8 +505,10 @@
       <h2><i class="fa-solid fa-code-compare"></i> Review & Merge (Step Consistency)</h2>
       <p>Enforce step vocabulary consistency across test repositories before uploading new scenarios:</p>
       <ul>
+        <li><strong>Xray Step Library Scanning</strong>: TestScribe connects to the Xray Cloud GraphQL API using your Client ID and Client Secret. When you trigger a sync on the <strong>Integration</strong> tab, it scans all issues of type <code>Test</code> within your selected Jira projects, filters for Cucumber (Gherkin) tests, extracts their scenario definition steps, and stores them in the extension's local storage database. <em>(Note: Manual tests are bypassed to keep focus strictly on reusable BDD steps).</em></li>
         <li><strong>Fuzzy Matcher</strong>: Uses Jaccard similarity metrics to check generated steps against synced library steps. High matches show up in green, warning of slight variations that can be normalized.</li>
         <li><strong>Step Autocomplete</strong>: When editing steps, start typing to see autocomplete recommendations from the library step dictionary.</li>
+        <li><strong>Prompt Context Injection</strong>: The synced step library is also used during generation. TestScribe finds similar existing Gherkin steps based on the ticket's title and description and appends them directly to the LLM system prompt, guiding the AI to reuse existing vocabulary naturally.</li>
         <li><strong>Save & Merge Target</strong>: Compares step sets against available test tickets and auto-selects the best-matching ticket to append new scenarios.</li>
       </ul>
     </section>

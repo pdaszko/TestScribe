@@ -187,6 +187,24 @@ Create an API key pair and copy the **Client ID** and **Client Secret**.
 
 ---
 
+## Review & Merge (Step Consistency)
+
+TestScribe helps teams maintain consistent Gherkin phrasing across their test suite.
+
+### 1. Syncing the Step Library
+To use step consistency, go to **Settings ➔ Integration** and click **Sync Steps Library**. 
+* **Under the Hood**: TestScribe queries the Xray Cloud GraphQL API for all tickets of type `Test` in your selected projects. It filters specifically for Cucumber (Gherkin) test issues, parses their scenario definition lines into individual steps, and stores them in the extension's local storage. Manual test types are ignored.
+
+### 2. How Suggestions Work
+Once synced, TestScribe leverages this local dictionary in two ways:
+* **Prompt Injection**: During initial generation, the extension finds existing steps similar to your active ticket and appends them to the system prompt, encouraging the AI to reuse matching phrasing.
+* **Fuzzy Step Matcher**: On the **Review & Merge** dashboard, TestScribe runs a Jaccard set-similarity calculation on word tokens (ignoring keywords like `Given` / `When` / `Then`) to compare your generated steps against the library:
+  $$\text{Similarity} = \frac{|A \cap B|}{|A \cup B|}$$
+  Matches are highlighted: **Green** for high similarity ($\ge 80\%$) and **Yellow** for medium similarity ($\ge 50\%$).
+* **Step Autocomplete**: Inside the merge step editors, start typing any word to see autocomplete suggestions recommending existing library steps.
+
+---
+
 ## Troubleshooting
 
 | Error | Cause | Fix |
