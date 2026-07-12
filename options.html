@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
   <head>
+    <meta charset="utf-8" />
     <title>Extension Settings</title>
     <link rel="stylesheet" href="options.css" />
     <!-- <style>
@@ -26,9 +27,8 @@
 
     <div class="tabs">
       <button class="tab-link active" data-target="agent-tab">LLM Agent</button>
-      <button class="tab-link" data-target="integration-tab">
-        Xray Integration
-      </button>
+      <button class="tab-link" data-target="integration-tab">Xray Integration</button>
+      <button class="tab-link" data-target="context-tab">Context Enrichment</button>
     </div>
 
     <div id="agent-tab" class="tab-content active">
@@ -39,9 +39,7 @@
         style="background: #fff; padding: 10px; border-radius: 4px; border: 1px solid var(--border-color); margin-bottom: 10px;"
       >
         <label>Default Agent:</label>
-        <div
-          style="display: flex; gap: 10px; font-size: 12px; margin-top: 5px;"
-        >
+        <div style="display: flex; gap: 15px; margin-top: 5px;">
           <label style="font-weight: normal; cursor: pointer;">
             <input
               type="radio"
@@ -55,10 +53,37 @@
             <input
               type="radio"
               name="defaultAgent"
+              value="mtplx"
+              style="width: auto;"
+            />
+            MTPLX (Local MTP)
+          </label>
+          <label style="font-weight: normal; cursor: pointer;">
+            <input
+              type="radio"
+              name="defaultAgent"
               value="gemini"
               style="width: auto;"
             />
             Gemini (Cloud)
+          </label>
+          <label style="font-weight: normal; cursor: pointer;">
+            <input
+              type="radio"
+              name="defaultAgent"
+              value="groq"
+              style="width: auto;"
+            />
+            Groq (Cloud)
+          </label>
+          <label style="font-weight: normal; cursor: pointer;">
+            <input
+              type="radio"
+              name="defaultAgent"
+              value="openai"
+              style="width: auto;"
+            />
+            Custom OpenAI
           </label>
         </div>
       </div>
@@ -87,14 +112,53 @@
         <div id="modelFetchStatus" aria-live="polite" style="font-size: 11px; color: #999; margin-bottom: 8px;"></div>
       </div>
 
-      <div id="gemini-config">
-        <label for="geminiKey">Gemini API Key:</label>
+      <div id="mtplx-config" style="display: none;">
+        <label for="mtplxHost">MTPLX Host URL:</label>
         <div class="form-group">
+          <input
+            type="text"
+            id="mtplxHost"
+            placeholder="e.g. http://127.0.0.1:8000"
+          />
+        </div>
+
+        <label for="mtplxModel">Model:</label>
+        <div class="form-group" style="display: flex; gap: 8px; align-items: center;">
+          <select id="mtplxModel" style="flex: 1; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+            <option value="">-- select a model --</option>
+          </select>
+          <button
+            id="refreshMtplxModels"
+            type="button"
+            style="padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px; background: #fff; cursor: pointer; font-size: 12px;"
+          >&#8635; Refresh</button>
+        </div>
+        <div id="mtplxModelFetchStatus" aria-live="polite" style="font-size: 11px; color: #999; margin-bottom: 8px;"></div>
+      </div>
+
+      <div id="gemini-config">
+        <div style="margin-bottom: 12px; font-size: 13px;">
+          <a
+            href="https://aistudio.google.com/app/apikey"
+            target="_blank"
+            style="color: #2196F3; text-decoration: none; font-weight: bold;"
+            >&#128279; Get Gemini Key here</a
+          >
+        </div>
+
+        <label for="geminiKey">Gemini API Key:</label>
+        <div class="form-group" style="margin-bottom: 6px;">
           <input
             type="password"
             id="geminiKey"
             placeholder="Paste your Gemini API Key"
           />
+        </div>
+        <div style="font-size: 11px; color: #5e6c84; margin-top: -2px; margin-bottom: 8px; line-height: 1.4;">
+          Your API key is stored securely in your browser's local storage. We do not collect, store, or transmit your key to external servers.
+        </div>
+        <div style="font-size: 11px; color: #a54800; margin-top: -2px; margin-bottom: 12px; line-height: 1.4;">
+          <strong>Recommendation:</strong> Set billing budgets/caps on your Google Cloud Console to control API usage. We are not responsible for any LLM charges or overusage costs incurred.
         </div>
 
         <label for="geminiModelSelect">Model:</label>
@@ -109,15 +173,63 @@
           >&#8635; Refresh</button>
         </div>
         <div id="geminiModelFetchStatus" aria-live="polite" style="font-size: 11px; color: #999; margin-bottom: 8px;"></div>
-
-        <div class="info-text">
-          <a
-            href="https://aistudio.google.com/app/apikey"
-            target="_blank"
-            style="color: #2196F3; text-decoration: none;"
-            >&#128279; Get Gemini Key here</a
-          >
+      </div>
+      
+      <div id="groq-config" style="display: none;">
+        <label for="groqKey">Groq API Key:</label>
+        <div class="form-group">
+          <input
+            type="password"
+            id="groqKey"
+            placeholder="Enter your Groq API Key"
+          />
         </div>
+
+        <label for="groqModel">Model:</label>
+        <div class="form-group" style="display: flex; gap: 8px; align-items: center;">
+          <select id="groqModel" style="flex: 1; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+            <option value="">-- select a model --</option>
+          </select>
+          <button
+            id="refreshGroqModels"
+            type="button"
+            style="padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px; background: #fff; cursor: pointer; font-size: 12px;"
+          >&#8635; Refresh</button>
+        </div>
+        <div id="groqModelFetchStatus" aria-live="polite" style="font-size: 11px; color: #999; margin-bottom: 8px;"></div>
+      </div>
+
+      <div id="openai-config" style="display: none;">
+        <label for="openaiHost">Custom Endpoint Host URL:</label>
+        <div class="form-group">
+          <input
+            type="text"
+            id="openaiHost"
+            placeholder="e.g. https://api.deepseek.com/v1 or http://localhost:1234/v1"
+          />
+        </div>
+
+        <label for="openaiKey">API Key (Optional):</label>
+        <div class="form-group">
+          <input
+            type="password"
+            id="openaiKey"
+            placeholder="Paste your API Key if required"
+          />
+        </div>
+
+        <label for="openaiModel">Model:</label>
+        <div class="form-group" style="display: flex; gap: 8px; align-items: center;">
+          <select id="openaiModel" style="flex: 1; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+            <option value="">-- select a model --</option>
+          </select>
+          <button
+            id="refreshOpenaiModels"
+            type="button"
+            style="padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px; background: #fff; cursor: pointer; font-size: 12px;"
+          >&#8635; Refresh</button>
+        </div>
+        <div id="openaiModelFetchStatus" aria-live="polite" style="font-size: 11px; color: #999; margin-bottom: 8px;"></div>
       </div>
 
       <button class="save-btn" id="saveAgent">Save Agent Settings</button>
@@ -156,12 +268,102 @@
           Test
         </button>
       </div>
+      <div id="testStatusMessage" style="font-size: 12px; font-weight: bold; margin-top: 8px; min-height: 18px; text-align: left;"></div>
+
+      <div id="library-sync-section" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+        <label style="font-weight: bold; margin-bottom: 8px;">Local Step Library Sync</label>
+        <div class="info-text" style="margin-bottom: 12px;">Sync all Cucumber and Manual tests from specific projects locally for instant, project-wide step reuse and matching.</div>
+
+        <!-- API Limit Warning Banner -->
+        <div style="font-size: 11px; background-color: #ffebe6; color: #bf2600; padding: 8px 10px; border-radius: 4px; margin-bottom: 12px; border: 1px solid #ffbdad; line-height: 1.4;">
+          <strong>⚠️ Note on API Limits:</strong> Xray Cloud enforces aggressive rate protection (HTTP 429). The extension batches requests and retries automatically, but syncing large projects might still skip some tests temporarily. You can retry failed tests later.
+        </div>
+        
+        <!-- Project Selector UI -->
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label style="font-size: 11px; margin-bottom: 4px; color: #5e6c84;">Add Projects to Sync:</label>
+          <div style="position: relative;">
+            <input type="text" id="project-search-input" placeholder="Search projects by name or key..." autocomplete="off" style="width: 100%; padding: 7px 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px;" />
+            <div id="project-dropdown-list" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--border-color); border-radius: 4px; max-height: 180px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 12px rgba(9, 30, 66, 0.15); margin-top: 4px;"></div>
+          </div>
+          <!-- Display List of Selected Projects -->
+          <div id="selected-projects-container" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;"></div>
+        </div>
+
+        <div style="font-size: 12px; margin-bottom: 12px; line-height: 1.6;">
+          <div>Status: <span id="sync-status-text" style="font-weight: bold; color: #de350b;">Not Synced</span></div>
+          <div>Last Synced: <span id="sync-time-text" style="color: #666;">Never</span></div>
+          <div>Synced Tests: <span id="sync-count-text" style="font-weight: bold; color: #666;">0</span></div>
+          <div>Synced Steps: <span id="sync-steps-count-text" style="font-weight: bold; color: #666;">0</span></div>
+          <div>Failed to Sync: <span id="sync-failed-count-text" style="font-weight: bold; color: #666;">0</span> <a href="#" id="retry-failed-link" style="display: none; margin-left: 8px; font-size: 11px; text-decoration: underline; color: #0052cc; font-weight: bold;">Retry failed</a></div>
+        </div>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <button id="sync-library-btn" class="save-btn" style="background-color: #36b37e;">Sync Steps Library</button>
+          <button id="clear-sync-btn" class="save-btn" style="background-color: #de350b;">Clear Synced Data</button>
+        </div>
+        <div id="sync-validation-msg" style="font-size: 11px; color: #de350b; margin-top: 6px; font-weight: bold; display: none;">⚠️ Add at least one project above to enable syncing.</div>
+        <div id="sync-progress" style="font-size: 12px; color: #6b778c; margin-top: 8px; font-weight: 500; display: none;"></div>
+      </div>
+    </div>
+
+    <div id="context-tab" class="tab-content">
+      <div class="info-text">Configure context enrichment defaults for prompts.</div>
+
+      <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 8px; cursor: pointer;">
+        <input type="checkbox" id="contextPanelHidden" style="width: auto;" />
+        Hide "Extra context (used in prompt)" panel
+      </label>
+
+      <div id="contextPanelHiddenNote" style="font-size: 11px; color: #777; margin-bottom: 12px; display: none;">
+        When hidden, the context panel is not shown in the popup. You can still enrich prompts manually via the prompt editor.
+      </div>
+
+      <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 8px; cursor: pointer;">
+        <input type="checkbox" id="contextDefaultParent" style="width: auto;" />
+        Include parent ticket by default
+      </label>
+
+      <label style="display: none; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 8px; cursor: pointer;">
+        <input type="checkbox" id="contextDefaultConfluence" style="width: auto;" />
+        Include Confluence pages by default
+      </label>
+
+      <div class="form-group" style="margin-top: 15px; margin-bottom: 15px;">
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; margin-bottom: 8px;">
+          <input type="checkbox" id="libraryStepsEnabled" style="width: auto;" />
+          Attach reusable library steps to prompt
+        </label>
+        
+        <div id="libraryStepsLimitContainer" style="display: none; margin-left: 24px; margin-top: 8px; margin-bottom: 8px;">
+          <label for="libraryStepsLimit" style="font-size: 12px; margin-bottom: 4px; display: block; color: #5e6c84;">Number of steps to attach:</label>
+          <input type="number" id="libraryStepsLimit" min="1" max="200" style="width: 100px; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px;" />
+        </div>
+
+        <div id="libraryStepsLimitStatus" style="font-size: 11px; font-weight: 500; margin-top: 4px; min-height: 15px;"></div>
+        <div style="font-size: 11px; color: #777; margin-top: 4px;">
+          Determines the number of synced steps from your library injected as context to maintain consistency and avoid duplicate step definitions.
+        </div>
+      </div>
+
+      <button class="save-btn" id="saveContext">Save Context Settings</button>
     </div>
 
     <div
       id="statusMessage"
       style="font-size: 13px; font-weight: bold; margin-top: 15px; text-align: center; color: transparent; min-height: 20px;"
     ></div>
+
+    <div id="unsaved-confirm-modal" class="confirm-modal-overlay" style="display: none;">
+      <div class="confirm-modal-content">
+        <h3>Unsaved Changes</h3>
+        <p>You have unsaved changes in this section. Do you want to discard them?</p>
+        <div class="confirm-modal-actions">
+          <button id="confirm-discard-btn" class="modal-btn discard-btn">Discard Changes</button>
+          <button id="confirm-cancel-btn" class="modal-btn cancel-btn">Keep Editing</button>
+        </div>
+      </div>
+    </div>
 
     <script src="options.js"></script>
   </body>

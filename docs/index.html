@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TestScribe - AI Test Case Generator for Jira</title>
+  <meta name="description" content="Official documentation for TestScribe, the Chrome Extension generating Gherkin & Manual test cases using local and cloud AI models.">
+  
+  <!-- Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --sidebar-bg: #111827;
+      --card-bg: #1f2937;
+      --text-color: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary-color: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent-color: #10b981;
+      --border-color: #374151;
+      --code-bg: #181b28;
+      --sidebar-width: 280px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Navigation */
+    aside {
+      width: var(--sidebar-width);
+      background-color: var(--sidebar-bg);
+      border-right: 1px solid var(--border-color);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      text-decoration: none;
+      color: var(--text-color);
+    }
+
+    .brand i {
+      font-size: 24px;
+      color: var(--primary-color);
+    }
+
+    .brand span {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .nav-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-top: 16px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item a:hover, .nav-item.active a {
+      color: var(--text-color);
+      background-color: rgba(99, 102, 241, 0.15);
+      border-left: 3px solid var(--primary-color);
+    }
+
+    /* Main Content */
+    main {
+      margin-left: var(--sidebar-width);
+      flex-grow: 1;
+      padding: 48px 80px;
+      max-width: 1000px;
+    }
+
+    section {
+      margin-bottom: 64px;
+      scroll-margin-top: 48px;
+    }
+
+    h1, h2, h3 {
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+      color: var(--text-color);
+    }
+
+    h1 {
+      font-size: 38px;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, #a5b4fc, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h2 {
+      font-size: 26px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+      margin-top: 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h3 {
+      font-size: 18px;
+      margin-top: 24px;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: var(--primary-hover);
+      text-decoration: underline;
+    }
+
+    ul, ol {
+      margin-bottom: 20px;
+      margin-left: 20px;
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    /* Highlighting Blocks */
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    .badge.success {
+      background-color: var(--accent-color);
+    }
+
+    .alert {
+      background-color: rgba(99, 102, 241, 0.05);
+      border-left: 4px solid var(--primary-color);
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 24px 0;
+    }
+
+    .alert-title {
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .alert-body {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* Grid layouts */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 24px;
+    }
+
+    .feature-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 24px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary-color);
+    }
+
+    .feature-card i {
+      font-size: 28px;
+      color: var(--primary-color);
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    /* Code blocks */
+    pre {
+      background-color: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px 20px;
+      overflow-x: auto;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: #e5e7eb;
+    }
+
+    p code, li code {
+      background-color: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 12.5px;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      color: var(--text-color);
+      border-color: var(--text-muted);
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+    }
+
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: var(--sidebar-bg);
+      color: var(--text-color);
+      font-weight: 600;
+    }
+
+    td {
+      color: var(--text-muted);
+    }
+
+    tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      aside {
+        width: 100%;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 20px;
+      }
+      main {
+        margin-left: 0;
+        padding: 24px;
+      }
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <aside>
+    <a href="#" class="brand">
+      <i class="fa-solid fa-pen-nib"></i>
+      <span>TestScribe</span>
+    </a>
+    <ul class="nav-list">
+      <li class="nav-section-title">Getting Started</li>
+      <li class="nav-item active"><a href="#overview"><i class="fa-solid fa-house"></i> Overview</a></li>
+      <li class="nav-item"><a href="#installation"><i class="fa-solid fa-download"></i> Installation</a></li>
+      
+      <li class="nav-section-title">LLM Configuration</li>
+      <li class="nav-item"><a href="#setup-ollama"><i class="fa-solid fa-cube"></i> Ollama (Local)</a></li>
+      <li class="nav-item"><a href="#setup-gemini"><i class="fa-solid fa-cloud-bolt"></i> Gemini (Cloud)</a></li>
+      <li class="nav-item"><a href="#setup-groq"><i class="fa-solid fa-bolt"></i> Groq (Cloud)</a></li>
+      <li class="nav-item"><a href="#setup-openai"><i class="fa-solid fa-server"></i> Custom OpenAI</a></li>
+      
+      <li class="nav-section-title">Features & Usage</li>
+      <li class="nav-item"><a href="#usage"><i class="fa-solid fa-circle-play"></i> Extension Usage</a></li>
+      <li class="nav-item"><a href="#context-enrichment"><i class="fa-solid fa-compass-drafting"></i> Context Enrichment</a></li>
+      <li class="nav-item"><a href="#step-consistency"><i class="fa-solid fa-code-compare"></i> Review & Merge</a></li>
+      <li class="nav-item"><a href="#troubleshooting"><i class="fa-solid fa-triangle-exclamation"></i> Troubleshooting</a></li>
+      <li class="nav-item"><a href="#changelog"><i class="fa-solid fa-history"></i> Feature Changelog</a></li>
+    </ul>
+  </aside>
+
+  <main>
+    <section id="overview">
+      <h1>TestScribe Documentation</h1>
+      <p>TestScribe is a developer-focused Chrome extension designed to speed up QA and developer workflows by automatically generating high-quality Gherkin (Cucumber) and Manual test cases from Jira ticket details. It integrates directly with local models (via Ollama) or cloud providers (Gemini, Groq, custom OpenAI hosts) and uploads results directly to Jira or Xray Cloud.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <i class="fa-solid fa-brain"></i>
+          <h3>Multi-LLM Native</h3>
+          <p>Run locally using Ollama (free & secure) or leverage cloud intelligence from Gemini, Groq, or any OpenAI-compatible server.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fa-solid fa-laptop-code"></i>
+          <h3>Step Consistency</h3>
+          <p>Enforce clean Gherkin standards by matching generated steps with your team's existing step dictionary using fuzzy Jaccard similarity.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="installation">
+      <h2><i class="fa-solid fa-download"></i> Installation</h2>
+      <p>Since TestScribe is currently distributed as an unpacked developer package, follow these quick steps to load it into Chrome:</p>
+      <ol>
+        <li>Download or clone the TestScribe repository files.</li>
+        <li>Open Chrome and navigate to <code>chrome://extensions/</code>.</li>
+        <li>Enable <strong>Developer mode</strong> using the toggle switch in the top-right corner.</li>
+        <li>Click <strong>Load unpacked</strong> in the top-left menu.</li>
+        <li>Select the root folder containing the extension's files.</li>
+      </ol>
+      <div class="alert">
+        <div class="alert-title">Success</div>
+        <div class="alert-body">The TestScribe pen icon will appear in your extensions list. Pin it to your address bar for fast access!</div>
+      </div>
+    </section>
+
+    <section id="setup-ollama">
+      <h2><i class="fa-solid fa-cube"></i> Setup: Ollama (Local AI)</h2>
+      <p>Ollama runs entirely on your local CPU/GPU, keeping your Jira data private and secure.</p>
+      
+      <h3>1. Download Ollama</h3>
+      <p>Install the desktop application from <a href="https://ollama.com" target="_blank">ollama.com</a>.</p>
+      
+      <h3>2. Pull Coder Model</h3>
+      <p>We recommend <code>qwen2.5-coder</code> for its precise structured output capability:</p>
+      <pre><code>ollama pull qwen2.5-coder</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+      <h3>3. Configure CORS Access</h3>
+      <p>Chrome extensions run under custom web-origins. You must configure Ollama to accept connection headers from extension origins:</p>
+      
+      <strong>macOS:</strong>
+      <pre><code>launchctl setenv OLLAMA_ORIGINS "*"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+      <p>After running, completely quit the Ollama menu bar app and restart it.</p>
+
+      <strong>Windows:</strong>
+      <p>Open environment variables configurations and create a new User variable:</p>
+      <ul>
+        <li>Variable Name: <code>OLLAMA_ORIGINS</code></li>
+        <li>Variable Value: <code>*</code></li>
+      </ul>
+      <p>Restart the Ollama service to apply the change.</p>
+
+      <h3>4. Save Settings</h3>
+      <p>In TestScribe Settings, choose <strong>Ollama (Local)</strong>, hit <strong>Refresh</strong> to view your pulled models, select the model, and click <strong>Save</strong>.</p>
+    </section>
+
+    <section id="setup-gemini">
+      <h2><i class="fa-solid fa-cloud-bolt"></i> Setup: Gemini (Cloud AI)</h2>
+      <p>Quick cloud configuration leveraging Google Gemini's models.</p>
+      <ol>
+        <li>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> and generate a free API key.</li>
+        <li>Open TestScribe Settings → Select **Gemini (Cloud)**.</li>
+        <li>Paste your API key in the password field and hit **Save Agent Settings**.</li>
+      </ol>
+    </section>
+
+    <section id="setup-groq">
+      <h2><i class="fa-solid fa-bolt"></i> Setup: Groq (Cloud AI)</h2>
+      <p>Enables ultra-fast cloud model generations using Llama 3, DeepSeek, or Mixtral models.</p>
+      <ol>
+        <li>Generate an API key on the <a href="https://console.groq.com/keys" target="_blank">Groq Console</a>.</li>
+        <li>In Settings, select **Groq (Cloud)** and input your API key.</li>
+        <li>Click **Refresh** to load models (e.g. <code>llama-3.3-70b-specdec</code>) and choose your preferred backend.</li>
+        <li>Save settings.</li>
+      </ol>
+    </section>
+
+    <section id="setup-openai">
+      <h2><i class="fa-solid fa-server"></i> Setup: Custom OpenAI Endpoint</h2>
+      <p>Connect TestScribe to local servers (LM Studio, LocalAI) or custom API gateways.</p>
+      <ol>
+        <li>Select **Custom OpenAI** in settings.</li>
+        <li>Set the **Custom Endpoint Host URL** (e.g., <code>http://localhost:1234/v1</code> for LM Studio).</li>
+        <li>Add an API key if required by your provider.</li>
+        <li>Click **Refresh** to populate the models list from the server's <code>/models</code> endpoint and select one.</li>
+      </ol>
+    </section>
+
+    <section id="usage">
+      <h2><i class="fa-solid fa-circle-play"></i> Usage Guide</h2>
+      <p>TestScribe integrates inline tabs for both Gherkin (BDD) and manual test case generation:</p>
+      <ol>
+        <li>Open a Jira ticket page (e.g., <code>https://*.atlassian.net/browse/TS-101</code>).</li>
+        <li>Click the TestScribe extension icon. The extension automatically loads ticket fields.</li>
+        <li>Choose a generator tab (<strong>Gherkin Prompt</strong> or <strong>Manual Prompt</strong>).</li>
+        <li>Click **Generate Test Cases** to fetch responses.</li>
+      </ol>
+      <p>For each generated card, you can:</p>
+      <ul>
+        <li>**Copy**: Copy Gherkin code to clipboard.</li>
+        <li>**Edit**: Type inline modifications inside step textareas.</li>
+        <li>**Create JIRA / Xray Test**: Upload and link it to the current requirement ticket.</li>
+      </ul>
+    </section>
+
+    <section id="context-enrichment">
+      <h2><i class="fa-solid fa-compass-drafting"></i> Context Enrichment</h2>
+      <p>Context enrichment lets the AI read related ticket hierarchies to generate highly relevant steps matching your domain vocabulary.</p>
+      <ul>
+        <li><strong>Epic/Story Context</strong>: Auto-scans for parent issues and retrieves descriptions to append to prompts.</li>
+        <li><strong>Interactive Context Toggle Panel</strong>: Discovered parent relations appear in a checklist between the title and prompt editor, enabling manual attachment control.</li>
+        <li><strong>Enrichment Settings</strong>: Configure settings to "Include parent ticket by default" or toggle the popup panel hide option.</li>
+      </ul>
+    </section>
+
+    <section id="step-consistency">
+      <h2><i class="fa-solid fa-code-compare"></i> Review & Merge (Step Consistency)</h2>
+      <p>Enforce step vocabulary consistency across test repositories before uploading new scenarios:</p>
+      <ul>
+        <li><strong>Fuzzy Matcher</strong>: Uses Jaccard similarity metrics to check generated steps against synced library steps. High matches show up in green, warning of slight variations that can be normalized.</li>
+        <li><strong>Step Autocomplete</strong>: When editing steps, start typing to see autocomplete recommendations from the library step dictionary.</li>
+        <li><strong>Save & Merge Target</strong>: Compares step sets against available test tickets and auto-selects the best-matching ticket to append new scenarios.</li>
+      </ul>
+    </section>
+
+    <section id="troubleshooting">
+      <h2><i class="fa-solid fa-triangle-exclamation"></i> Troubleshooting</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Error Message</th>
+            <th>Likely Cause</th>
+            <th>Resolution</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>403 Forbidden</code></td>
+            <td>Ollama CORS blocked</td>
+            <td>Set <code>OLLAMA_ORIGINS="*"</code> environment variable and restart Ollama.</td>
+          </tr>
+          <tr>
+            <td><code>Ollama unreachable</code></td>
+            <td>Ollama not running</td>
+            <td>Verify the Ollama process is active and check the Host URL in settings.</td>
+          </tr>
+          <tr>
+            <td><code>No JIRA data detected</code></td>
+            <td>Invalid page URL</td>
+            <td>Make sure you are on a Jira ticket browse view (URL path contains <code>/browse/</code>).</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="changelog">
+      <h2><i class="fa-solid fa-history"></i> Feature Changelog</h2>
+      
+      <h3>Latest Feature Releases</h3>
+      <ul>
+        <li><strong>Groq & OpenAI Providers</strong>: Fast cloud-tier inference + custom OpenAI backend connections.</li>
+        <li><strong>Reasoning Model Protection</strong>: Strips reasoning text tags (like <code>&lt;think&gt;...&lt;/think&gt;</code>) automatically.</li>
+        <li><strong>Dynamic Models Loading</strong>: Fetches model list dynamically from endpoints.</li>
+        <li><strong>Prompt Reusable Library Limits</strong>: Limit options with dynamic sync warning and click-to-tabs navigation shortcuts.</li>
+      </ul>
+
+      <h3>Review & Merge & Autocomplete</h3>
+      <ul>
+        <li><strong>Fuzzy Steps Matching</strong>: Calculates Jaccard similarity on step word sets.</li>
+        <li><strong>Gherkin Editor Autocomplete</strong>: Live search dictionary dropdown inside input textareas.</li>
+        <li><strong>Linked Jira Status URL</strong>: Success logs are clickable hyperlinks.</li>
+      </ul>
+
+      <h3>Defaults Configurations</h3>
+      <ul>
+        <li><strong>Parent ticket context fallback</strong>: epic & parent descriptions checks.</li>
+        <li><strong>Extra context panel display controls</strong>: options page hide toggles.</li>
+      </ul>
+    </section>
+  </main>
+
+  <script>
+    // Copy button helper
+    function copyCode(btn) {
+      const code = btn.previousElementSibling.textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.textContent;
+        btn.textContent = "Copied!";
+        setTimeout(() => {
+          btn.textContent = originalText;
+        }, 2000);
+      });
+    }
+
+    // Scroll active nav indicator helper
+    window.addEventListener('scroll', () => {
+      const sections = document.querySelectorAll('section');
+      const navItems = document.querySelectorAll('.nav-item');
+      let currentSectionId = 'overview';
+
+      sections.forEach(section => {
+        const top = section.offsetTop;
+        const height = section.offsetHeight;
+        if (window.scrollY >= top - 150) {
+          currentSectionId = section.getAttribute('id');
+        }
+      });
+
+      navItems.forEach(item => {
+        item.classList.remove('active');
+        const link = item.querySelector('a');
+        if (link && link.getAttribute('href') === `#${currentSectionId}`) {
+          item.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

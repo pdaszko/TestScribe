@@ -95,8 +95,8 @@ body {
 }
 
 .ts-generator {
-  margin-top: 5;
-  width: 80%;
+  margin-top: 5px;
+  width: 100%;
 }
 
 .status-container {
@@ -142,7 +142,7 @@ body {
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 6px;
-  width: 80%;
+  width: 100%;
   /* fill parent width */
   box-sizing: border-box;
 }
@@ -414,4 +414,71 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+/* Collapsible Prompt Editors */
+.prompt-editor.collapsed {
+  min-height: 80px !important;
+  height: 80px !important;
+  max-height: 80px !important;
+  resize: none !important;
+  overflow-y: hidden !important;
+  opacity: 0.8;
+  cursor: pointer;
+  border: 1px dashed #0052cc;
+  background-color: #fafbfc;
+}
+
+.prompt-editor.collapsed:hover {
+  background-color: #f4f5f7;
+  opacity: 1;
+}
+
+.prompt-toggle-btn {
+  transition: all 0.2s ease;
+}
+
+.prompt-toggle-btn:hover {
+  background-color: #e6effc !important;
+}
+
+/* Gherkin Step Autocomplete Styles */
+.step-autocomplete-dropdown {
+  position: absolute;
+  z-index: 10000;
+  background: #ffffff;
+  border: 1px solid #c1c7d0;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(9, 30, 66, 0.15);
+  max-height: 150px;
+  overflow-y: auto;
+  width: 320px;
+  box-sizing: border-box;
+}
+.autocomplete-item {
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 11px;
+  font-family: monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid #f4f5f7;
+  color: #172b4d;
+  box-sizing: border-box;
+}
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+.autocomplete-item.active {
+  background-color: #deebff;
+  color: #0747a6;
+  font-weight: 500;
+}
+.autocomplete-item strong {
+  font-weight: bold;
+  color: #0052cc;
+}
+.autocomplete-item.active strong {
+  color: #0747a6;
 }

@@ -6,7 +6,7 @@
 body {
   font-family: "Segoe UI", sans-serif;
   padding: 15px;
-  width: 350px;
+  width: 500px;
   background-color: var(--bg-color);
 }
 h2 {
@@ -78,6 +78,93 @@ button.save-btn {
     opacity: 0;
   }
   to {
+    opacity: 1;
+  }
+}
+
+.dropdown-item:hover {
+  background-color: #f4f5f7 !important;
+}
+
+/* ===== CUSTOM CONFIRM OVERLAY MODAL ===== */
+.confirm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(9, 30, 66, 0.4);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.confirm-modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 6px;
+  width: 320px;
+  box-shadow: 0 8px 24px rgba(9, 30, 66, 0.2);
+  text-align: left;
+  animation: scaleUp 0.2s ease-out;
+}
+
+.confirm-modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #172b4d;
+}
+
+.confirm-modal-content p {
+  font-size: 12px;
+  color: #5e6c84;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.confirm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.modal-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+}
+
+.discard-btn {
+  background-color: #de350b;
+  color: white;
+}
+.discard-btn:hover {
+  background-color: #bf2600;
+}
+
+.cancel-btn {
+  background-color: #f4f5f7;
+  color: #5e6c84;
+}
+.cancel-btn:hover {
+  background-color: #ebecf0;
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
     opacity: 1;
   }
 }

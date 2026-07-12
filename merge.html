@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>TestScribe — Step Merge</title>
+  <link rel="stylesheet" href="merge.css">
+</head>
+
+<body>
+
+  <div id="header">
+    <h2>Step Consistency Review</h2>
+    <span id="issue-label"></span>
+  </div>
+
+  <div id="scope-panel">
+    <label for="scope-select">Find similar test case:</label>
+    <select id="scope-select">
+      <option value="testplan">Test Plans linked to this ticket</option>
+      <option value="testset">Test Sets linked to this ticket</option>
+      <option value="project" selected>All tests in project</option>
+      <option value="specific">Specific Test Key</option>
+    </select>
+    <input type="text" id="custom-jql" placeholder="Enter test key (e.g. TEST-123)" style="display:none">
+    <button id="search-btn">Search</button>
+    <span id="search-status"></span>
+  </div>
+
+  <div id="no-results" style="display:none">
+    <p>No existing tests found in this scope.</p>
+    <button id="change-scope-btn">Change scope</button>
+  </div>
+
+  <div id="history-toolbar">
+    <button id="revert-btn" class="history-arrow-btn" disabled title="Revert Change">
+      <img src="images/arrow-undo.svg" class="history-icon" alt="Undo" />
+    </button>
+    <button id="repeat-btn" class="history-arrow-btn" disabled title="Repeat Change">
+      <img src="images/arrow-redo.svg" class="history-icon" alt="Redo" />
+    </button>
+  </div>
+
+  <div id="merge-columns">
+
+    <div id="col-generated" class="merge-col">
+      <div class="col-header">
+        <h3>Generated Test</h3>
+        <div class="feature-title-row">
+          <span class="feature-label">Feature:</span>
+          <input type="text" id="gen-summary" class="test-summary-input" placeholder="Feature Name" />
+        </div>
+      </div>
+      <div id="gen-steps" class="steps-list"></div>
+      <div class="col-footer">
+        <button id="create-test-btn">Create Xray Test</button>
+        <span id="create-test-status"></span>
+      </div>
+    </div>
+
+    <div id="col-existing" class="merge-col">
+      <div class="col-header">
+        <h3>Existing Ticket</h3>
+        <div id="ticket-dropdown-container" class="custom-dropdown">
+          <div id="ticket-dropdown-trigger" class="dropdown-trigger disabled">Search JIRA project first...</div>
+          <div id="ticket-dropdown-menu" class="dropdown-menu" style="display: none;">
+            <input type="text" id="ticket-search-input" class="dropdown-search" placeholder="Type key or summary..." />
+            <div id="ticket-options-list" class="options-list"></div>
+          </div>
+        </div>
+      </div>
+      <div id="existing-steps" class="steps-list"></div>
+      <div class="col-footer">
+        <button id="save-btn" disabled>Save Changes</button>
+        <div id="save-status"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="bottom-bar">
+    <div style="flex: 1;"></div>
+    <button id="done-btn">Done</button>
+  </div>
+
+  <div id="step-autocomplete" class="step-autocomplete-dropdown" style="display:none;"></div>
+  <script src="merge.js"></script>
+</body>
+
+</html>

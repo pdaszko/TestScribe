@@ -2,6 +2,7 @@
 <html>
 
 <head>
+  <meta charset="utf-8" />
   <link rel="stylesheet" href="popup.css" />
 </head>
 
@@ -24,7 +25,10 @@
       <span>Active LLM:</span>
       <select id="llm-selector">
         <option value="ollama">Ollama (Local)</option>
+        <option value="mtplx">MTPLX (Local MTP)</option>
         <option value="gemini">Gemini Cloud</option>
+        <option value="groq">Groq (Cloud)</option>
+        <option value="openai">Custom OpenAI</option>
       </select>
     </div>
     <div id="ollama-model-bar" class="model-bar" style="display: none;">
@@ -38,6 +42,32 @@
       <select id="popup-gemini-model" style="font-size: 15px; padding: 1px 4px; border: 1px solid #ccc; border-radius: 4px;">
         <option value="">Loading...</option>
       </select>
+    </div>
+    <div id="mtplx-model-bar" class="model-bar" style="display: none;">
+      <span style="font-size: 12px;">Model:</span>
+      <select id="popup-mtplx-model" style="font-size: 15px; padding: 1px 4px; border: 1px solid #ccc; border-radius: 4px;">
+        <option value="">Loading...</option>
+      </select>
+    </div>
+    <div id="groq-model-bar" class="model-bar" style="display: none;">
+      <span style="font-size: 12px;">Model:</span>
+      <select id="popup-groq-model" style="font-size: 15px; padding: 1px 4px; border: 1px solid #ccc; border-radius: 4px;">
+        <option value="">Loading...</option>
+      </select>
+    </div>
+    <div id="openai-model-bar" class="model-bar" style="display: none;">
+      <span style="font-size: 12px;">Model:</span>
+      <select id="popup-openai-model" style="font-size: 15px; padding: 1px 4px; border: 1px solid #ccc; border-radius: 4px;">
+        <option value="">Loading...</option>
+      </select>
+    </div>
+    <div id="gemini-model-error" style="display: none; font-size: 12px; align-items: center; gap: 4px;">
+      <span style="color: #c0392b; font-weight: 500;">Configure your Gemini API Key:</span>
+      <a href="#" id="open-settings-link" style="color: #0052cc; text-decoration: underline; font-weight: bold; cursor: pointer;">Settings</a>
+    </div>
+    <div id="groq-model-error" style="display: none; font-size: 12px; align-items: center; gap: 4px;">
+      <span style="color: #c0392b; font-weight: 500;">Configure your Groq API Key:</span>
+      <a href="#" id="open-settings-link-groq" style="color: #0052cc; text-decoration: underline; font-weight: bold; cursor: pointer;">Settings</a>
     </div>
     <a href="https://aistudio.google.com/app/logs" target="_blank" class="log-link" id="gemini-log-link">
       <span>&#128196; Logs</span>
@@ -56,8 +86,21 @@
         <h1 id="ticket-title" style="margin:0; font-size: 1.2rem;"></h1>
       </div>
 
-      <h3>Built prompt from requirements:</h3>
-      <textarea id="prompt-editor" class="prompt-editor" rows="6" style="width:100%"></textarea>
+      <!-- CONTEXT PANEL (rendered by popup.js) -->
+      <div id="context-panel"></div>
+
+      <div class="prompt-header-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; margin-bottom: 5px;">
+        <h3 style="margin: 0;">Built prompt from requirements:</h3>
+        <button id="toggle-prompt-btn" class="prompt-toggle-btn" style="background: none; border: 1px solid #0052cc; color: #0052cc; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+          <span>✏️ Edit Prompt</span>
+        </button>
+      </div>
+      <textarea id="prompt-editor" class="prompt-editor collapsed" rows="6" style="width:100%"></textarea>
+      <div id="prompt-bottom-bar" style="display: none; justify-content: flex-end; margin-top: 4px; margin-bottom: 8px;">
+        <button id="toggle-prompt-btn-bottom" class="prompt-toggle-btn" style="background: none; border: 1px solid #0052cc; color: #0052cc; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+          <span>Collapse</span>
+        </button>
+      </div>
       
       <div class="generator">
         <div class="status-container" style="justify-content: flex-start;">
@@ -83,8 +126,21 @@
         <h1 id="ticket-title-manual" style="margin:0; font-size: 1.2rem;"></h1>
       </div>
 
-      <h3>Built prompt from requirements (Manual):</h3>
-      <textarea id="prompt-editor-manual" class="prompt-editor" rows="6" style="width:100%"></textarea>
+      <!-- CONTEXT PANEL (rendered by popup.js) -->
+      <div id="context-panel-manual"></div>
+
+      <div class="prompt-header-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; margin-bottom: 5px;">
+        <h3 style="margin: 0;">Built prompt from requirements (Manual):</h3>
+        <button id="toggle-prompt-btn-manual" class="prompt-toggle-btn" style="background: none; border: 1px solid #0052cc; color: #0052cc; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+          <span>✏️ Edit Prompt</span>
+        </button>
+      </div>
+      <textarea id="prompt-editor-manual" class="prompt-editor collapsed" rows="6" style="width:100%"></textarea>
+      <div id="prompt-bottom-bar-manual" style="display: none; justify-content: flex-end; margin-top: 4px; margin-bottom: 8px;">
+        <button id="toggle-prompt-btn-bottom-manual" class="prompt-toggle-btn" style="background: none; border: 1px solid #0052cc; color: #0052cc; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+          <span>Collapse</span>
+        </button>
+      </div>
       
       <div class="generator">
         <div class="status-container" style="justify-content: flex-start;">

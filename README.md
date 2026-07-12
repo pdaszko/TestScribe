@@ -119,6 +119,40 @@ TestScribe automatically selects the best available Gemini Flash model.
 
 ---
 
+## Setup: Groq (Cloud AI — Free Tier Available)
+
+Groq provides extremely fast cloud inference for Llama 3, DeepSeek, and Mixtral models.
+
+### 1. Get a Groq API Key
+
+Go to [console.groq.com/keys](https://console.groq.com/keys) and create a free API Key.
+
+### 2. Configure TestScribe
+
+1. Click the TestScribe icon → **Settings**
+2. Select **Groq (Cloud)**
+3. Paste your API key
+4. Click **Refresh** to load available models and select one (e.g., `llama-3.3-70b-specdec` or `llama3-8b-8192`)
+5. Click **Save Agent Settings**
+
+---
+
+## Setup: Custom OpenAI-Compatible (Local/Cloud AI)
+
+Connect to any service hosting models that mirror the standard OpenAI API structure (such as LM Studio, DeepSeek API, or OpenRouter).
+
+### 1. Configure TestScribe
+
+1. Click the TestScribe icon → **Settings**
+2. Select **Custom OpenAI**
+3. Configure your endpoint details:
+   - **Custom Endpoint Host URL**: e.g., `http://localhost:1234/v1` for LM Studio, or `https://api.deepseek.com/v1` for DeepSeek.
+   - **API Key (Optional)**: Paste your key if required by the custom host.
+   - **Model**: Click **Refresh** to fetch and select models from the host's `/models` API.
+4. Click **Save Agent Settings**
+
+---
+
 ## Setup: Xray Integration (Optional)
 
 If you use Xray Cloud for test management, TestScribe can import tests directly.
@@ -163,3 +197,9 @@ Create an API key pair and copy the **Client ID** and **Client Secret**.
 | `Gemini API Key missing` | Key not saved in Settings | Open Settings → Gemini tab → paste key → Save |
 | Popup opens but no JIRA data | Not on a JIRA browse page | Navigate to a ticket URL (`/browse/PROJ-123`) first |
 | Tests not appearing | Generation failed silently | Open the popup's DevTools console (right-click popup → Inspect) for details |
+
+---
+
+## Documentation & Releases
+
+- **[Feature Changelog](docs/changelog.md)** — Detailed list of all features, enhancements, and bug fixes added since the initial release.
