@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Test Scribe",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Generate gherkin or manual scenarios based on your JIRA ticket using Ollama or Gemini. Create tickets test with one button.",
   "icons": {
     "16": "images/icons/test-scribe-logo-16.png",
@@ -9,7 +9,12 @@
     "48": "images/icons/test-scribe-logo-48.png",
     "128": "images/icons/test-scribe-logo-128.png"
   },
-  "permissions": ["activeTab", "scripting", "storage", "tabs"],
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "tabs"
+  ],
   "host_permissions": [
     "https://*.atlassian.net/*",
     "http://*/*",
@@ -24,8 +29,12 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://*.atlassian.net/browse/*"],
-      "js": ["content.js"]
+      "matches": [
+        "https://*.atlassian.net/browse/*"
+      ],
+      "js": [
+        "content.js"
+      ]
     }
   ],
   "options_page": "options.html"
